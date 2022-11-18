@@ -1,0 +1,48 @@
+version: '2'
+services:
+  nginx:
+    image: nginx:latest
+    container_name: wordpress_nginx
+    ports:
+        - '92:80'
+    volumes:
+        - ./nginx:/etc/nginx/conf.d
+        - ./nginx/logs:/var/log/nginx
+        - ./wordpress:/var/www/html
+    links:
+        - wordpress
+    restart: always
+
+  wordpress:
+    image: wordpress:6.0.3-php8.1-fpm
+    restart: always
+    expose:
+      - '9000'
+    container_name: wordpress_wordpress
+    restart: unless-stopped
+    env_file: wordpress.env
+    volumes:
+      - ./wordpress:/var/www/html
+
+  mariadb:
+    image: mariadb:latest
+    container_name: wordpress_mariadb
+    expose:
+      - '3308'
+    restart: unless-stopped
+    env_file: wordpress_db.env
+    volumes:
+      - mariadb:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    container_name: wordpress_redis
+    restart: unless-stopped
+    expose:
+     - '6379'
+#    links:
+#      - wordpress
+volumes:
+  wordpress:
+  nginx:
+  mariadb:
