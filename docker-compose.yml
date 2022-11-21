@@ -9,7 +9,7 @@ volumes:
   mariadb:
   
 services:
-  nginx:
+  wordpress_nginx:
     image: nginx:latest
     container_name: wordpress_nginx
     restart: always
@@ -22,7 +22,7 @@ services:
     ports:
       - '92:80' 
 
-  mariadb:
+  wordpress_mariadb:
     image: mariadb:latest
     container_name: wordpress_mariadb
     restart: unless-stopped
@@ -34,7 +34,7 @@ services:
     expose:
       - '3308' 
       
-  redis:
+  wordpress_redis:
     image: redis:latest
     container_name: wordpress_redis
     restart: unless-stopped
@@ -58,8 +58,3 @@ services:
       - wordpress
     expose:
       - '9000'
-
-volumes:
-  wordpress:
-  nginx:
-  mariadb:
