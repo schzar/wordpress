@@ -1,47 +1,64 @@
-version: '2'
+version: '2.1'
+
+networks:
+  wordpress:
+  
+volumes:
+  wordpress:
+  nginx:
+  mariadb:
+  
 services:
   nginx:
     image: nginx:latest
     container_name: wordpress_nginx
-    ports:
-        - '92:80'
-    volumes:
-        - ./nginx:/etc/nginx/conf.d
-        - ./nginx/logs:/var/log/nginx
-        - ./wordpress:/var/www/html
-    links:
-        - wordpress
     restart: always
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx
+      - ./wordpress:/var/www/html
+    networks:
+      - wordpress
+    ports:
+      - '92:80' 
+
+  mariadb:
+    image: mariadb:latest
+    container_name: wordpress_mariadb
+    restart: unless-stopped
+    env_file: wordpress_db.env
+    volumes:
+      - mariadb:/var/lib/mysql
+    networks:
+      - wordpress     
+    expose:
+      - '3308' 
+      
+  redis:
+    image: redis:latest
+    container_name: wordpress_redis
+    restart: unless-stopped
+    networks:
+      - wordpress
+    expose:
+      - '6379'
 
   wordpress:
     image: wordpress:6.0.3-php8.1-fpm
-    restart: always
-    expose:
-      - '9000'
     container_name: wordpress_wordpress
     restart: unless-stopped
     env_file: wordpress.env
     volumes:
       - ./wordpress:/var/www/html
-
-  mariadb:
-    image: mariadb:latest
-    container_name: wordpress_mariadb
+    depends_on:
+      - wordpress_nginx
+      - wordpress_redis
+      - wordpress_mariadb      
+    networks:
+      - wordpress
     expose:
-      - '3308'
-    restart: unless-stopped
-    env_file: wordpress_db.env
-    volumes:
-      - mariadb:/var/lib/mysql
+      - '9000'
 
-  redis:
-    image: redis:latest
-    container_name: wordpress_redis
-    restart: unless-stopped
-    expose:
-     - '6379'
-#    links:
-#      - wordpress
 volumes:
   wordpress:
   nginx:
