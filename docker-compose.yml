@@ -28,7 +28,7 @@ services:
     restart: unless-stopped
     env_file: wordpress_db.env
     volumes:
-      - mariadb:/var/lib/mysql
+      - ./mariadb:/var/lib/mysql
     networks:
       - wordpress     
     expose:
