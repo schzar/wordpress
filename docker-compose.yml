@@ -10,7 +10,7 @@ volumes:
   
 services:
   wordpress_nginx:
-    image: nginx:latest
+    image: 'nginx'
     container_name: wordpress_nginx
     restart: always
     volumes:
@@ -25,7 +25,7 @@ services:
       - '92:80' 
 
   wordpress_mariadb:
-    image: mariadb:latest
+    image: 'mariadb'
     container_name: wordpress_mariadb
     restart: unless-stopped
     env_file: wordpress_db.env
@@ -37,7 +37,7 @@ services:
       - '3306' 
       
   wordpress_redis:
-    image: redis:latest
+    image: 'redis'
     container_name: wordpress_redis
     restart: unless-stopped
     networks:
