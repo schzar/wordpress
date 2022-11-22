@@ -1,4 +1,4 @@
-version: '2.1'
+version: '2.2'
 
 networks:
   wordpress:
@@ -17,6 +17,8 @@ services:
       - ./nginx:/etc/nginx/conf.d
       - ./nginx/logs:/var/log/nginx
       - ./wordpress:/var/www/html
+    depends_on:
+      - wordpress
     networks:
       - wordpress
     ports:
@@ -44,14 +46,13 @@ services:
       - '6379'
 
   wordpress:
-    image: wordpress:6.0.3-php8.1-fpm
+    image: wordpress:php8.1-fpm
     container_name: wordpress_wordpress
     restart: unless-stopped
     env_file: wordpress.env
     volumes:
       - ./wordpress:/var/www/html
     depends_on:
-      - wordpress_nginx
       - wordpress_redis
       - wordpress_mariadb      
     networks:
